@@ -1,0 +1,115 @@
+pr analysiere :frage :daten :objecttyp
+	
+	; Filtere sein / haben heraus
+	localmake "german [ich du er sie es wir ihr sie bin bist ist sind]
+	; Versuche einzelne Worte wiederzufinden => mindestens ein Wort
+	setze "neuedaten []
+	foreach :daten[
+		localmake "test ?
+		if (countelements :frage :test) > 1[ setze "neuedaten ml :test :neuedaten]
+	]
+
+	; "Suchergebnisse gefunden"
+	;Objektsuche
+	if :objecttype = "date[
+		getdates :neuedaten
+		; Mehrmals vorkommende Daten finden
+		
+	]
+ende
+
+pr countelements :satz :elemente
+	setze "uebereinstimmung 0
+	foreach :satz[
+		localmake "oldtest ?
+		foreach :elemente[
+			localmake "newtest ?
+			;dz satz :oldtest :newtest
+			if :oldtest = :newtest[setze "uebereinstimmung :uebereinstimmung +1 ]
+		]
+	]
+	rg :uebereinstimmung
+ende
+
+pr frage
+	;setze "frage liesliste
+	setze "frage [Wann wurde Luxenburg eingenommen?]
+
+	setze "datenliste [Luxenburg wurde am 10.04.2014 eingenommen. Es war um 13 Uhr. Und es regnete sehr viel . Sehr viele irrelevante Sätze.]
+	wenn element? "Wer :frage [setze "objecttype "person]
+	wenn element? "Wo :frage [setze "objecttype "ort]
+	wenn element? "Wie :frage [setze "objecttype "general]
+	wenn element? "Wann :frage [setze "objecttype "date]
+	setze "daten trenneliste :datenliste ".
+	
+	; Suche nach Einträgen,die mit der Frage übereinstimmen.
+	
+	setze "frage oe :frage
+	analysiere :frage :daten :objecttype
+ende
+
+pr getdates :daten
+	make "dates []
+	foreach :daten[
+		localmake "iterator_var ?
+		foreach :iterator_var[
+			setze "var ?
+			setze "isdate "wahr
+			foreach :var[
+				setze "var_3 ?
+				wennsonst element? :var_3 [0 1 2 3 4 5 6 7 8 9 .] [][setze "isdate "falsch]
+			]
+			wenn :isdate = "wahr [setze "dates ml :var :dates]
+		]
+	]
+	dz :dates
+ende
+
+pr ohnepunkt :string
+	
+	setze "neuerstring "
+	wenn :string = " [rg "]
+	foreach :string[
+		setze "teste ?
+		wennsonst ? = ". [][wennsonst :neuerstring = "[setze "neuerstring :teste][setze "neuerstring wort :neuerstring :teste]]
+	]
+	rg :neuerstring
+ende
+
+pr trenneliste :liste :trennzeichen
+
+	setze "neu []
+	setze "superneu []
+	foreach :liste[
+		
+		setze "test el länge ? ?
+		setze "t2 ?
+		wennsonst :test = :trennzeichen[
+			setze "superneu ml (ohnepunkt :t2) :superneu
+			setze "neu ml :superneu :neu
+			setze "superneu[]
+		][setze "superneu ml :t2 :superneu]
+	
+	]
+	rg :neu
+
+ende
+
+setze "daten [[Luxenburg wurde am 10.04.2014 eingenommen] [Es war um 13 Uhr] [Und es regnete sehr viel] [Sehr viele irrelevante Sätze]]
+setze "datenliste [Luxenburg wurde am 10.04.2014 eingenommen. Es war um 13 Uhr. Und es regnete sehr viel . Sehr viele irrelevante Sätze.]
+setze "dates []
+setze "frage [wurde Luxenburg eingenommen?]
+setze "isdate "falsch
+setze "neu [[Luxenburg wurde am 10.04.2014 eingenommen] [Es war um 13 Uhr] [Und es regnete sehr viel] [Sehr viele irrelevante Sätze]]
+setze "neuedaten [[Luxenburg wurde am 10.04.2014 eingenommen]]
+setze "neuerstring "Sätze
+setze "objecttype "date
+setze "superneu []
+setze "t2 "Sätze.
+setze "test ".
+setze "teste ".
+setze "testvar [[Sehr viele irrelevante Sätze]]
+setze "uebereinstimmung 0
+setze "var "eingenommen
+setze "var_3 "n
+setze "zeichen "e
