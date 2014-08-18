@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "lib.py", line 116, in <module>
+  File "lib.py", line 11, in save
+PermissionError: [Errno 13] Permission denied: 'output.txt'
